@@ -34,6 +34,9 @@ elif t == str: ins = [ord(x) for x in ins]
 elif t in (list, tuple):
     for x in ins:
         if type(x) != int: cmdError('Command line error: List inputs can only contain integers.')
+elif t == int:
+    ins = [ins,]
+
 ins = list(ins)
 
 #Run script
