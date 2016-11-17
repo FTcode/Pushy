@@ -176,6 +176,31 @@ def getRandom(e, s):
     n1,n2=s.pop(),s.pop()
     s.push(random.randint(min(n1,n2), max(n1,n2)))
 
+def sortStack(e, s):
+    vals = s[:]
+    del s[:]
+    s.push(*sorted(vals))
+
+def sortStackDescending(e, s):
+    vals = s[:]
+    del s[:]
+    s.push(*sorted(vals, reverse = True))
+
+def copyInToOut(e, s):
+    e.OUT.clear()
+    vals = e.IN[:]
+    e.OUT.push(*vals)
+
+def interrupt(e, s):
+    quit()
+
+def uniqueStack(e, s):
+    vals = []
+    for x in s:
+        if x not in vals: vals.append(x)
+    del s[:]
+    s.push(*vals)
+
 STACK_CMDS = {
 
     '+' : MathFunc('+'),
@@ -204,6 +229,8 @@ STACK_CMDS = {
     ',' : (lambda e,s: s.pop(0)),
     'R' : (lambda e,s: s.push(*s[::-1][1:])),
 
+    'x' : (lambda e,s: s.push(e.IN == e.OUT)),
+
     '|' : XFunc(abs),
     '~' : XFunc(negate),
     
@@ -222,6 +249,9 @@ STACK_CMDS = {
 
     's' : (lambda e,s: s.push(*str(abs(s.pop())))),
     'j' : joinInts,
+    'g' : sortStack,
+    'G' : sortStackDescending,
+    'u' : uniqueStack,
     
     'y' : XFunc(isPalindrome),
     'Y' : (lambda e,s: s.push(s[::-1] == s)),
@@ -230,7 +260,7 @@ STACK_CMDS = {
     'M' : maximum,
     'm' : minimum,
 
-    'R' : (lambda e,s: s.push(*range(1,abs(s.pop())+1))),
+    'R' : (lambda e,s: s.push(*range(1,abs(s.pop())+1))), 
     'X' : (lambda e,s: s.push(*range(abs(s.pop())))),
     'P' : (lambda e,s: s.push(product(*s))),
     'S' : (lambda e,s: s.push(sum(s))),
@@ -248,6 +278,7 @@ STACK_CMDS = {
 
     '^' : (lambda e,s: e.IN.push(e.OUT.pop())),
     'v' : (lambda e,s: e.OUT.push(e.IN.pop())),
+    'V' : copyInToOut,
 
     '#' : (lambda e,s: e.io.out(s[-1])),
     '_' : (lambda e,s: e.io.out(*s)),
@@ -257,7 +288,8 @@ STACK_CMDS = {
     'q' : (lambda e,s: e.io.out(''.join((chr(ord('a') + x%26)) for x in s))),
     'D' : (lambda e,s: e.io.setSep(chr(abs(s.pop())))),
     'N' : (lambda e,s: e.io.setSep('')),
-
+    
+    'i' : interrupt,
     'W' : (lambda e,s: time.sleep(s.pop())),
     
 }
