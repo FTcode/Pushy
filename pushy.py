@@ -28,7 +28,7 @@ if len(sys.argv[2:]) > 0:
 valid_ins = [list, int, str, tuple]
 t = type(ins)
 
-if t not in [list, int, str, tuple]:
+if t not in valid_ins:
     cmdError("Command line error: not an accepted input type.")
 elif t == str: ins = [ord(x) for x in ins]
 elif t in (list, tuple):
@@ -36,8 +36,5 @@ elif t in (list, tuple):
         if type(x) != int: cmdError('Command line error: List inputs can only contain integers.')
 ins = list(ins)
 
-
-
-# === Run Script === #
-
+#Run script
 Script(code).run(*ins)
