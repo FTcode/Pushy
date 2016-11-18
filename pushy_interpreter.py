@@ -227,7 +227,7 @@ STACK_CMDS = {
     'C' : copyLast,
     '.' : (lambda e,s: s.pop()),
     ',' : (lambda e,s: s.pop(0)),
-    'R' : (lambda e,s: s.push(*s[::-1][1:])),
+    'w' : (lambda e,s: s.push(*s[::-1][1:])),
 
     'x' : (lambda e,s: s.push(e.IN == e.OUT)),
 
