@@ -322,6 +322,7 @@ class IO_Util:
         if end == None: end = self.sep
         self.lastsep = end
         print(*msg, file = sys.stdout, end = end)
+        sys.stdout.flush()
 
     def err(self, *msg):
         if self.lastsep != '\n': print(end='\n')
