@@ -208,6 +208,12 @@ def uniqueStack(e, s):
     del s[:]
     s.push(*vals)
 
+def ternary(e, s):
+    condition = s.pop()
+    fVal = s.pop()
+    tVal = s.pop()
+    s.push([fVal,tVal][bool(condition)])
+
 STACK_CMDS = {
 
     '+' : MathFunc('+'),
@@ -298,6 +304,8 @@ STACK_CMDS = {
     
     'i' : interrupt,
     'W' : (lambda e,s: time.sleep(s.pop())),
+
+    'z' : ternary,
     
 }
 
@@ -321,7 +329,7 @@ LOOP_CHARS = {
 #Currently uses ASCII, will use ISO-8859-1 if more commands are needed.
 def remainingLetters():
     for i in [chr(x) for x in range(33,127)]:
-        if i not in (''.join(LOOP_CHARS.keys()) + ''.join(STACK_CMDS.keys()) + BACK + STRING_MODE + BREAK) and not i.isdigit(): print(end=i)
+        if i not in (''.join(LOOP_CHARS.keys()) + ''.join(STACK_CMDS.keys()) + BACK + STRING_MODE + BREAK + COMMENT) and not i.isdigit(): print(end=i)
 
 class IO_Util:
     def __init__(self):
