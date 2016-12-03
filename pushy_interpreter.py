@@ -36,7 +36,6 @@ class Stack(list):
                 self[x] = int(func(self[x]))
             return
         self.push(int(func(self.pop())))
-        
 
 class Env:
     def __init__(self, *v):
@@ -97,6 +96,13 @@ class IfStatement(Loop):
         self.valid = False
         return v
 
+class InfLoop(Loop):
+    def __init__(self, index, env):
+        self.index = index
+
+    def verify(self, env):
+        return True
+
 #======= Commands =======#
 
 # Template for simple mathematical operation
@@ -119,6 +125,7 @@ def PushValCmd(val):
 
 # Integer sqrt of n: the largest whole number, x, where x < n**2
 def isqrt(n):
+    if n < 1: return n
     x = n
     while True:
         y = (n//x+x)//2
@@ -296,14 +303,17 @@ STACK_CMDS = {
 
 BACK = ';'
 STRING_MODE = '`'
-BREAK = '\\'
+BREAK = 'B'
 
+COMMENT = '\\'
+COMMENT_ESC = '\n'
 
 LOOP_CHARS = {
 
     '?' : IfStatement,
     '$' : WhileLoop,
     ':' : ForLoop,
+    '[' : InfLoop,
     
 }
 
@@ -345,6 +355,7 @@ class Script:
         loops = []
         skip = 0
         stringMode = False
+        comMode = False
         currString = ''
 
         try:
@@ -363,6 +374,10 @@ class Script:
 
                 char = self.script[i]
 
+                if comMode:
+                    if char == COMMENT_ESC:
+                        comMode = False
+                    continue
 
                 if skip:
                     if char in LOOP_CHARS:
@@ -380,6 +395,10 @@ class Script:
 
                 if stringMode:
                     currString += char
+                    continue
+
+                if char == COMMENT:
+                    comMode = True
                     continue
 
                 if char in string.whitespace:
@@ -414,7 +433,7 @@ class Script:
                     try:
                         STACK_CMDS[char](env, env.currStack())
                     except Exception as e:
-                        env.io.err("Python error (at token "+repr(i+1)+"):",e)
+                        env.io.err("Python error (at char '"+char+"', token "+repr(i+1)+"):",e)
                         break
                     continue
         except KeyboardInterrupt:
