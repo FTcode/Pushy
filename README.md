@@ -1,5 +1,5 @@
 # Pushy
-Pushy is an esoteric programming language. The name comes from its data structure, two LIFO stacks, on which one "pushes" operands for different operations. Although it was not designed for [code golf](https://en.wikipedia.org/wiki/Code_golf), its tokenized syntax and range of builtins often result in rather concise code.
+Pushy is an esoteric programming language. The name comes from its data structure, two [LIFO stacks](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)), on which one "pushes" operands for different operations. Although it was not designed for [code golf](https://en.wikipedia.org/wiki/Code_golf), its tokenized syntax and range of builtins often result in rather concise code.
 
 To run a pushy script, download both scripts in this git and use the command-line syntax: `$ pushy <source-file> [input]`.
 
@@ -20,10 +20,15 @@ _(a quine is a program which outputs its own source code)_
     
 This is the shortest known quine for Pushy. First, 95 and 34 are pushed to the stack. Then, `_` outputs a "representation" of the stack - its values, seperated by spaces (resulting in `95 34`, with a trailing newline). As mentioned earlier, the `"` outputs the stack as a string. 95 and 34 are the Unicode codes for `_` and `"`, so the bottom line is printed.
 
-### Numbers 1-10:
+### Bits -> Maxsize
 
-    TR_
+This program takes input from the command line, a number of bits, and prints the maximum value for an unsigned number of that size.
+
+    2{et#
+
+- `2{` inserts 2 before the given value **n**, so the stack is now `[2, n]`.
+- `e` exponentiates these, yielding **2<sup>n</sup>**. 
+- `t` is the "tail" operator, it decrements the last item.
+- `#` then prints the value.
     
-`T` is a shortcut for `10` - a numeric literal which is pushed to the stack. `R` then takes the last value (we'll call it **n**) and creates the range 1 to **n** - inclusively. `_` then outputs the current stack, containing this range, seperated by spaces:
 
-    1 2 3 4 5 6 7 8 9 10
