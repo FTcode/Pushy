@@ -11,7 +11,6 @@ class Stack(list):
     def push(self, *v):
         for x in v: super().append(int(x))
 
-
     def pop(self, i = -1, peek = False):
         if len(self) < 1 : raise Exception("Cannot take args/values from empty stack.")
         return self[i] if peek else super().pop(i)
@@ -19,8 +18,11 @@ class Stack(list):
     def clear(self):
         del self[:]
 
-    def shiftLeft(self): self.push(self.pop(0))
-    def shiftRight(self): self.insert(0, self.pop())
+    def shiftLeft(self):
+        self.push(self.pop(0))
+
+    def shiftRight(self):
+        self.insert(0, self.pop())
 
     def runMathFunc(self, func):
         val = self.pop()
@@ -60,13 +62,13 @@ class Env:
 #======= Loop Classes =======#
 
 class Loop:
-    def __init__(self, index, env) -> None: pass
-    def verify(self, env) -> bool : pass
+    def __init__(self, index, env): pass
+    def verify(self, env): pass
 
 class WhileLoop(Loop):
     def __init__(self, index, env):
         self.index = index
-    
+
     def verify(self, env):
         s = env.currStack()
         if len(s) < 1 : return False
@@ -133,6 +135,8 @@ def isqrt(n):
         x = y
 
 def isPrime(num):
+    #TODO: Use optimised prime checker
+
     if num < 2:
         return False
     for i in range(2, int(math.sqrt(num)) + 1):
@@ -246,11 +250,11 @@ STACK_CMDS = {
 
     '|' : XFunc(abs),
     '~' : XFunc(negate),
-    
+
     'T' : PushValCmd(10),
     'H' : PushValCmd(100),
     'Z' : PushValCmd(0),
-    
+
     'b' : XFunc(bool),
     'f' : XFunc(factorial),
     'h' : XFunc(lambda x:x+1),
@@ -265,7 +269,7 @@ STACK_CMDS = {
     'g' : sortStack,
     'G' : sortStackDescending,
     'u' : uniqueStack,
-    
+
     'y' : XFunc(isPalindrome),
     'Y' : (lambda e,s: s.push(s[::-1] == s)),
     'L' : (lambda e,s: s.push(len(s))),
@@ -273,7 +277,7 @@ STACK_CMDS = {
     'M' : maximum,
     'm' : minimum,
 
-    'R' : (lambda e,s: s.push(*range(1,abs(s.pop())+1))), 
+    'R' : (lambda e,s: s.push(*range(1,abs(s.pop())+1))),
     'X' : (lambda e,s: s.push(*range(abs(s.pop())))),
     'P' : (lambda e,s: s.push(product(*s))),
     'S' : (lambda e,s: s.push(sum(s))),
@@ -301,12 +305,12 @@ STACK_CMDS = {
     'q' : (lambda e,s: e.io.out(''.join((chr(ord('a') + x%26)) for x in s))),
     'D' : (lambda e,s: e.io.setSep(chr(abs(s.pop())))),
     'N' : (lambda e,s: e.io.setSep('')),
-    
+
     'i' : interrupt,
     'W' : (lambda e,s: time.sleep(s.pop())),
 
     'z' : ternary,
-    
+
 }
 
 BACK = ';'
@@ -322,7 +326,7 @@ LOOP_CHARS = {
     '$' : WhileLoop,
     ':' : ForLoop,
     '[' : InfLoop,
-    
+
 }
 
 #Test func
@@ -351,8 +355,8 @@ class IO_Util:
 class Script:
     def __init__(self, scriptText):
         self.script = self.toTokens(scriptText)
-        
-    def toTokens(self, script) -> list:
+
+    def toTokens(self, script):
         # Group adjacent digits together.
         t = re.findall('[^\d]|\d+',script)
         return t
@@ -436,7 +440,7 @@ class Script:
                 if char.isdigit():
                     env.currStack().push(int(char))
                     continue
-                
+
                 if char in STACK_CMDS:
                     try:
                         STACK_CMDS[char](env, env.currStack())

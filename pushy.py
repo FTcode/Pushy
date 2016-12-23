@@ -4,12 +4,10 @@ from pushy_interpreter import Script
 def cmdError(msg):
     raise SystemExit(msg)
 
-
 # Check whether filename has been provided
 if len(sys.argv) < 2:
     cmdError('Usage: pushy <file> [input]')
 
-    
 # Check whether specified file exists
 try: file = open(sys.argv[1], encoding = 'ASCII')
 except FileNotFoundError: cmdError('File error: File not found.')
