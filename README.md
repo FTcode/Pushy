@@ -11,6 +11,16 @@ You can try Pushy via the [online interpreter](https://tio.run/nexus/pushy), pro
     
 This is rather straightforward. Any text wrapped in backticks is interpreted as a "string" - but Pushy only uses integers, so the ASCII codepoint of each character is pushed to the current stack. The `"` operator then takes all values in the stack, interprets them as characters, and prints.
 
+[**Try it online!**](https://tio.run/nexus/pushy#@5/gkZqTk6@jEJ5flJOimKD0/z8A)
+
+### Fibonacci Generator
+
+This program takes input from the command line, and prints that many numbers of the fibonacci sequence.
+
+    Z1@:2d+;_
+
+[**Try it online!**](https://tio.run/nexus/pushy#LU@7bsMwDNz1FTc2qFHYGd2lS4cuadExTVEoMmMLlUlDjxT5eleKxYXE8Xh3XE/4SGG6YfEyej0jCkZi8joS4kS4WB8iDrmfhbUxFpzmM/nwpBTudcLbvDhrbOxheUkRNkAYIWrzq7rjxiku6KB5QKte6uEnXbMSbdQGN0tusDziq23QNeBv1VfmAdHOFDBIj4c4ZQcjHFKBeKewHx4LC5tNyZ13kMt9dDp/sMdVu0RBPVfF15zEiSzqpwLvKZbwf5O4mkhhXdeu/Qc) (commented)
+
 ### Quine:
 
 _(a quine is a program which outputs its own source code)_
@@ -18,17 +28,5 @@ _(a quine is a program which outputs its own source code)_
     95 34
     _"
     
-This is the shortest known quine for Pushy. First, 95 and 34 are pushed to the stack. Then, `_` outputs a "representation" of the stack - its values, seperated by spaces (resulting in `95 34`, with a trailing newline). As mentioned earlier, the `"` outputs the stack as a string. 95 and 34 are the Unicode codes for `_` and `"`, so the bottom line is printed.
-
-### Bits -> Maxsize
-
-This program takes input from the command line, a number of bits, and prints the maximum value for an unsigned number of that size.
-
-    2{et#
-
-- `2{` inserts 2 before the given value **n**, so the stack is now `[2, n]`.
-- `e` exponentiates these, yielding **2<sup>n</sup>**. 
-- `t` is the "tail" operator, it decrements the last item.
-- `#` then prints the value.
-    
+[**Try it online!**](https://tio.run/nexus/pushy#@29pqmBswhWvxPX/PwA)
 
