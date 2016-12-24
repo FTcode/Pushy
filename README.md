@@ -17,9 +17,9 @@ This is rather straightforward. Any text wrapped in backticks is interpreted as 
 
 This program takes input from the command line, and prints that many numbers of the fibonacci sequence.
 
-    Z1@:2d+;_
+    Z1@2-:2d+;_
 
-[**Try it online!**](https://tio.run/nexus/pushy#LU@7bsMwDNz1FTc2qFHYGd2lS4cuadExTVEoMmMLlUlDjxT5eleKxYXE8Xh3XE/4SGG6YfEyej0jCkZi8joS4kS4WB8iDrmfhbUxFpzmM/nwpBTudcLbvDhrbOxheUkRNkAYIWrzq7rjxiku6KB5QKte6uEnXbMSbdQGN0tusDziq23QNeBv1VfmAdHOFDBIj4c4ZQcjHFKBeKewHx4LC5tNyZ13kMt9dDp/sMdVu0RBPVfF15zEiSzqpwLvKZbwf5O4mkhhXdeu/Qc) (commented)
+[**Try it online!**](https://tio.run/nexus/pushy#LY8xT8QwDIX3/Io3guihtmNZWBhYDsQIh1AuzbURqV0lzqH79SVp68WW/ez3eTnhPcXxhjnwEPQEYQyWbNBiIaPFxYUoOOZ8ZtLGOFCazjbER6Wwxgmv0@ydcdLB0ZwELoIJUbT5Vc3npikuaKCpR62e98UPe82X7CatcHPW944GfNUVmgr0rdpDtyqPhxbiJhvRc4c7GbOHYYqptOheoe0fig6bUSHPM/BlLb3OP7S4ap9sVE@7@0tm8cyz@tkbb0kK/t/IfmdSWJalqf8B) (commented)
 
 ### Quine:
 
