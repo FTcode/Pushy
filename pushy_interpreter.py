@@ -1,9 +1,5 @@
-#!/usr/bin/env python
-
-"""
-Interpreter for Pushy (rewrite)
-Created 15/11/16
-"""
+# == Pushy Interpreter == #
+# Created 15/11/2016
 
 import re, string, sys, math, time, functools, random
 
