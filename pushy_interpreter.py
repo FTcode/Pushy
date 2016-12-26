@@ -1,9 +1,10 @@
 """
-Interpreter for Pushy (rewrite)
+Pushy Interpreter - Version 2 (rewrite)
 Created 26/12/16
 """
 
 import sys
+import math
 import operator
 
 class Stack(list):
@@ -63,27 +64,107 @@ class Stack(list):
         del self[:]
         return data
 
+    def run_unary(self, func, on_all = False):
+        """ Run a unary function which maps an integer to a new value.
+        This can be done "on_all" items (in place), or the last. """
+        if len(self) < 1:
+            return
+
+        if not on_all:
+            self.push(func(self.pop()))
+            return
+
+        for i in range(len(self)):
+            self[i] = func(self[i])
+
 """ Define all commands to be used in the interpreter. """
 
 def clear_stack(env, stack):
     stack.clear()
 
+def copy_region(env, stack):
+    val = stack.pop()
+    stack.push(*stack[-val:])
+
+def multiple_copies(env, stack):
+    copies = stack.pop()
+    value = stack.pop(peek = True)
+    for i in range(copies):
+        stack.push(value)
+
+def digit_length(x):
+    return len(str(abs(x)))
+
 def dupe_last(env, stack):
     stack.push(stack.pop(peek = True))
+
+def e_notation(x, y):
+    return x * (pow(10, y))
+
+def factorial(x):
+    return math.factorial(abs(x))
+
+def head(x):
+    return x + 1
 
 def leftshift(env, stack):
     # Arity: > 1
     stack.push(stack.pop(index = 0))
 
+#TODO: unspaghetti this mess
+def MathFunc(operation, fail = 0):
+    def stack_func(env, stack):
+        if not env.on_all:
+            if len(stack) < 2:
+                return
+
+        val = stack.pop()
+        def unary_func(x):
+            try:
+                return int(operation(x, val))
+            except:
+                return fail
+        stack.run_unary(unary_func, on_all = env.on_all)
+    return (stack_func, 1)
+
+def ConstNilad(*value):
+    def stack_func(env, stack):
+        stack.push(*value)
+    return (stack_func, 0)
+
 def mirror(env, stack):
     data = stack.copy()[1:]
     stack.push(*data)
+
+def not_bool(x):
+    return int(x == 0)
+
+def op_on_all(env, stack):
+    env.on_all = True
+
+def op_on_last(env, stack):
+    env.on_all = False
 
 def pop_first(env, stack):
     stack.pop(index = 0)
 
 def pop_last(env, stack):
     stack.pop()
+
+def primality(num):
+    #TODO: Use optimised prime checker
+
+    if num == 2:
+        return True
+    if num == 3:
+        return True
+    if num < 2:
+        return False
+
+    for i in range(2, int(math.sqrt(num)) + 1):
+        if num % i == 0: return False
+
+    return True
 
 def rightshift(env, stack):
     # Arity: > 1
@@ -93,7 +174,16 @@ def reverse_stack(env, stack):
     data = stack.clear()
     stack.push(*reversed(data))
 
+def stack_equality(env, stack):
+    stack.push(int(env.IN == env.OUT))
 
+def tail(x):
+    return x - 1
+
+def UnaryFunc(func):
+    def stack_func(env, stack):
+        stack.run_unary(func, on_all = env.on_all)
+    return (stack_func, 1)
 
 """ Assign tokens to the commands. """
 
@@ -101,16 +191,52 @@ COMMANDS = {
 
     #FORMAT: 'char' : (function, minumum operands)
 
+    # Mathematical functions
+    '+': MathFunc(operator.add),
+    '-': MathFunc(operator.sub),
+    '*': MathFunc(operator.mul),
+    '/': MathFunc(operator.floordiv),
+    'e': MathFunc(operator.pow),
+    'E': MathFunc(e_notation),
+    '%': MathFunc(operator.mod),
+
+    '=': MathFunc(operator.eq),
+    '!': MathFunc(operator.ne),
+    '>': MathFunc(operator.gt),
+    '<': MathFunc(operator.lt),
+    ')': MathFunc(operator.ge),
+    '(': MathFunc(operator.le),
+
     # Stack manipulation
     '{': (leftshift, 1),
     '}': (rightshift, 1),
     '@': (reverse_stack, 0),
     '&': (dupe_last, 1),
-    
+
+    'C': (multiple_copies, 2),
     'c': (clear_stack, 0),
+    'd': (copy_region, 1),
     'w': (mirror, 0),
     '.': (pop_last, 1),
     ',': (pop_first, 1),
+
+    'K': (op_on_all, 0),
+    'k': (op_on_last, 0),
+
+    # Nilads
+    'Z': ConstNilad(0),
+    'T': ConstNilad(10),
+    'H': ConstNilad(100),
+
+    # Unaries
+    '|': UnaryFunc(abs),
+    '~': UnaryFunc(operator.neg),
+    'b': UnaryFunc(bool),
+    'n': UnaryFunc(not_bool),
+    'f': UnaryFunc(factorial),
+    'h': UnaryFunc(head),
+    't': UnaryFunc(tail),
+    'l': UnaryFunc(digit_length),
 
 }
 
@@ -137,9 +263,12 @@ class IO_Util:
         quit()
 
 class PushyEnv:
-    def __init__(self, io, *ins):
+    def __init__(self, ins, io = None):
+        if io == None: io = IO_Util()
+
         self.inputs = ins
         self.io = io
+        self.on_all = False
 
         self.IN = Stack(*ins)
         self.OUT = Stack()
