@@ -133,6 +133,27 @@ def intsqrt(n):
         if x <= y: return x
         x = y
 
+def ispalindrome(x):
+    s = str(x)
+    return s == s[::-1]
+
+def join_ints(env, stack):
+    if len(stack) < 2:
+        return
+
+    s = ''
+
+    if env.on_all:
+        values = stack.clear()
+        s = str(values[0])
+        s += ''.join(str(abs(x)) for x in values[1:])
+
+    else:
+        n1, n2 = stack.pop(), stack.pop()
+        s = str(n2) + str(abs(n1))
+
+    stack.push(int(s))
+
 def leftshift(env, stack):
     # Arity: > 1
     stack.push(stack.pop(index = 0))
@@ -155,7 +176,7 @@ def MathFunc(operation, fail = 0):
 
 def mirror(env, stack):
     data = stack.copy()[1:]
-    stack.push(*data)
+    stack.push(*data[::-1])
 
 def multiple_copies(env, stack):
     copies = stack.pop()
@@ -193,6 +214,25 @@ def primality(num):
 
     return True
 
+def product(env, stack):
+    if len(stack) < 1:
+        stack.push(0)
+        return
+
+    prod = 1
+    for val in stack:
+        prod *= val
+
+    stack.push(prod)
+
+def push_inc_range(env, stack):
+    val = stack.pop()
+    stack.push(*range(1, val+1))
+
+def push_range(env, stack):
+    val = stack.pop()
+    stack.push(*range(val))
+
 def rightshift(env, stack):
     # Arity: > 1
     stack.insert(0, stack.pop())
@@ -211,17 +251,42 @@ def send_to_out(env, stack):
     if val != None:
         env.OUT.push(val)
 
+def sort_asc(env, stack):
+    data = stack.clear()
+    stack.push(*sorted(data))
+
+def sort_desc(env, stack):
+    data = stack.clear()
+    stack.push(*sorted(data, reverse = True))
+
+def split_int(env, stack):
+    item = abs(stack.pop())
+    digits = map(int, str(item))
+    stack.push(*digits)
+
 def stack_equality(env, stack):
     stack.push(int(env.IN == env.OUT))
 
+def stack_ispalindrome(env, stack):
+    stack.push(stack == stack[::-1])
+
 def stack_len(env, stack):
     stack.push(len(stack))
+
+def sum_stack(env, stack):
+    stack.push(sum(stack))
 
 def swap_stacks(env, stack):
     env.swap_stacks()
 
 def tail(x):
     return x - 1
+
+def ternary(env, stack):
+    a = stack.pop()
+    tVal = stack.pop()
+    fVal = stack.pop()
+    stack.push(tVal if a else fVal)
 
 def UnaryFunc(func):
     def stack_func(env, stack):
@@ -249,6 +314,9 @@ COMMANDS = {
     'E': MathFunc(e_notation),
     '%': MathFunc(operator.mod),
 
+    'M': MathFunc(max),
+    'm': MathFunc(min),
+
     '=': MathFunc(operator.eq),
     '!': MathFunc(operator.ne),
     '>': MathFunc(operator.gt),
@@ -263,13 +331,16 @@ COMMANDS = {
     '&': (dupe_last, 1),
 
     'C': (multiple_copies, 2),
-    'c': (clear_stack, 0),
+    'c': (clear_stack, 1),
     'd': (copy_region, 1),
-    'w': (mirror, 0),
+    'w': (mirror, 1),
     '.': (pop_last, 1),
     ',': (pop_first, 1),
 
-    'u': (unique_stack, 0),
+    'u': (unique_stack, 1),
+    'g': (sort_asc, 1),
+    'G': (sort_asc, 1),
+    'Y': (stack_ispalindrome, 0),
 
     'K': (op_on_all, 0),
     'k': (op_on_last, 0),
@@ -300,14 +371,24 @@ COMMANDS = {
     'p': UnaryFunc(primality),
     't': UnaryFunc(tail),
     'l': UnaryFunc(digit_length),
+    'y': UnaryFunc(ispalindrome),
 
     # Other
     'U': (get_random, 2),
     'i': (interrupt, 0),
+    's': (split_int, 1),
+    'j': (join_ints, 2),
+    'R': (push_inc_range, 1),
+    'X': (push_range, 1),
+    'P': (product, 0),
+    'S': (sum_stack, 0),
+    'A': (lambda e,s: s.push(*range(65, 91)), 0),
+    'a': (lambda e,s: s.push(*range(97, 123)), 0),
+    'z': (ternary, 3),
+
+    #TODO: implement OUTPUT commands
 
 }
-
-
 
 #==== this comment is a marker (delete later pls) ====#
 
@@ -354,3 +435,6 @@ class Env:
 
     def switch_stacks(self):
         self.focus = not self.focus
+
+    def __repr__(self):
+        return repr(self.IN) + ', ' + repr(self.OUT)
