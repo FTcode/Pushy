@@ -6,6 +6,7 @@ Created 26/12/16
 import math
 import operator
 import random
+import re
 import string
 import sys
 import time
@@ -79,6 +80,68 @@ class Stack(list):
 
         for i in range(len(self)):
             self[i] = int(func(self[i]))
+
+""" Define loop classes to be in the interpreter. """
+
+class Loop:
+    def __init__(self, env):
+        pass
+
+    def verify(self, env):
+        pass
+
+class ForLoop(Loop):
+    def __init__(self, env):
+        stack = env.curr_stack()
+        
+        if len(stack) < 1:
+            self.iters = 0
+
+        else:
+            self.iters = stack.pop()
+
+    def verify(self, env):
+        if self.iters > 0:
+            self.iters -= 1
+            return True
+        
+        return False
+
+class WhileLoop(Loop):
+    def verify(self, env):
+        val = env.curr_stack().pop(peek = True)
+
+        if val == None:
+            return False
+
+        if val == 0:
+            return False
+
+        return True
+
+class IfStatement(Loop):
+    def __init__(self, env):
+        val = env.curr_stack().pop()
+
+        if val == None:
+            self.valid = False
+
+        if val == 0:
+            self.valid = False
+
+        else:
+            self.valid = True
+
+    def verify(self, env):
+        if self.valid:
+            self.valid = False
+            return True
+        
+        return False
+
+class InfLoop(Loop):
+    def verify(self, env):
+        return True
 
 """ Define all commands to be used in the interpreter. """
 
@@ -430,6 +493,22 @@ COMMANDS = {
 
 }
 
+LOOP_TOKENS = {
+
+    '?': IfStatement,
+    ':': ForLoop,
+    '$': WhileLoop,
+    '[': InfLoop,
+
+}
+
+BACK = ';'
+BREAK = 'B'
+
+STRING_MODE = '`'
+COMMENT = '\\'
+COMMENT_ESC = '\n'
+
 # (Testing/Dev function)
 def remaining_chars():
     all_chars = map(chr, range(32, 127))
@@ -437,12 +516,14 @@ def remaining_chars():
     for c in all_chars:
         if c.isdigit():
             continue
-        if c in COMMANDS.keys():
+        if c in COMMANDS.keys() or c in LOOP_TOKENS.keys():
             continue
+        if c in (BACK, BREAK, STRING_MODE, COMMENT, COMMENT_ESC, ' '):
+            continue
+        
         left += c
     return left
 
-#==== this comment is a marker (delete later pls) ====#
 
 class IO_Util:
     def __init__(self, delim = '\n'):
@@ -490,3 +571,81 @@ class Env:
 
     def __repr__(self):
         return repr(self.IN) + ', ' + repr(self.OUT)
+
+class Script:
+    def __init__(self, script_text):
+        self.tokens = self.to_tokens(script_text)
+
+    @staticmethod
+    def to_tokens(text):
+        """ Tokenizer function. Takes a Pushy script and tokenizes it.
+        Adjacent integers are grouped together, but leading zeroes are parsed seperately. """
+        
+        return re.findall(r'0|[1-9]+\d*|[^\d]', text)
+
+    def run(self, *inputs):
+
+        env = Env(inputs)
+
+        i = -1
+        skip = 0
+        loops = []
+        
+        while True:
+            i += 1
+
+            if i >= len(self.tokens):
+                break
+                #TODO: do not break
+
+            char = self.tokens[i]
+
+            if skip:
+                if char in LOOP_TOKENS:
+                    skip += 1
+                elif char == BACK:
+                    skip -= 1
+                continue
+
+            if char in LOOP_TOKENS:
+                newloop = (LOOP_TOKENS[char](env), i)
+                
+                if newloop[0].verify(env):
+                    loops.append(newloop)
+
+                else:
+                    skip += 1
+
+                continue
+
+            if char == BACK:
+                if len(loops) == 0:
+                    continue
+
+                l = loops[-1]
+
+                if l[0].verify(env):
+                    i = l[1]
+
+                else:
+                    loops.pop()
+
+                continue
+
+            
+
+            if char.isdigit():
+                env.curr_stack().push(int(char))
+                continue
+
+            if char in COMMANDS:
+                cmd = COMMANDS[char]
+
+                if cmd[1] <= len(env.curr_stack()):
+                    cmd[0](env, env.curr_stack())
+
+                continue
+
+        return env
+                
+        
