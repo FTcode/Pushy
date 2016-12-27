@@ -215,7 +215,7 @@ def primality(num):
     return True
 
 def print_char(env, stack):
-    val = stack.pop()
+    val = stack.pop(peek = True)
     if val > 0:
         env.io.out(chr(val))
 
@@ -252,7 +252,6 @@ def push_range(env, stack):
     stack.push(*range(val))
 
 def rightshift(env, stack):
-    # Arity: > 1
     stack.insert(0, stack.pop())
 
 def reverse_stack(env, stack):
