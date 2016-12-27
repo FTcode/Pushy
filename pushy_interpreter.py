@@ -214,6 +214,24 @@ def primality(num):
 
     return True
 
+def print_char(env, stack):
+    val = stack.pop()
+    if val > 0:
+        env.io.out(chr(val))
+
+def print_charcodes(env, stack):
+    s = ''
+    for i in stack:
+        if i > 0:
+            s += chr(i)
+    env.io.out(s)
+
+def print_int(env, stack):
+    env.io.out(stack.pop())
+
+def print_stack(env, stack):
+    env.io.out(*stack)
+
 def product(env, stack):
     if len(stack) < 1:
         stack.push(0)
@@ -386,7 +404,12 @@ COMMANDS = {
     'a': (lambda e,s: s.push(*range(97, 123)), 0),
     'z': (ternary, 3),
 
-    #TODO: implement OUTPUT commands
+    # Output commands
+    '#': (print_int, 1),
+    '_': (print_stack, 0),
+    "'": (print_char, 1),
+    '"': (print_charcodes, 0),
+    #TODO: output via alphabet.
 
 }
 
