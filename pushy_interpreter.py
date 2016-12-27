@@ -3,10 +3,12 @@ Pushy Interpreter - Version 2 (rewrite)
 Created 26/12/16
 """
 
-import sys
 import math
-import random
 import operator
+import random
+import string
+import sys
+import time
 
 class Stack(list):
     """ A basic LIFO (last in = first out) integer stack, with utility functions. """
@@ -155,7 +157,6 @@ def join_ints(env, stack):
     stack.push(int(s))
 
 def leftshift(env, stack):
-    # Arity: > 1
     stack.push(stack.pop(index = 0))
 
 #TODO: unspaghetti this mess
@@ -184,6 +185,9 @@ def multiple_copies(env, stack):
     for i in range(copies):
         stack.push(value)
 
+def no_delim(env, stack):
+    env.io.set_delim('')
+
 def not_bool(x):
     return int(x == 0)
 
@@ -192,6 +196,14 @@ def op_on_all(env, stack):
 
 def op_on_last(env, stack):
     env.on_all = False
+
+def out_lowercase(env, stack):
+    s = [ord('a') + i % 26 for i in stack]
+    env.io.out(s)
+
+def out_uppercase(env, stack):
+    s = [ord('A') + i % 26 for i in stack]
+    env.io.out(s)
 
 def pop_first(env, stack):
     stack.pop(index = 0)
@@ -227,16 +239,12 @@ def print_charcodes(env, stack):
     env.io.out(s)
 
 def print_int(env, stack):
-    env.io.out(stack.pop())
+    env.io.out(stack.pop(peek = True))
 
 def print_stack(env, stack):
     env.io.out(*stack)
 
 def product(env, stack):
-    if len(stack) < 1:
-        stack.push(0)
-        return
-
     prod = 1
     for val in stack:
         prod *= val
@@ -267,6 +275,10 @@ def send_to_out(env, stack):
     val = env.IN.pop()
     if val != None:
         env.OUT.push(val)
+
+def set_delim(env, stack):
+    val = abs(stack.pop())
+    env.io.set_delim(chr(val))
 
 def sort_asc(env, stack):
     data = stack.clear()
@@ -315,6 +327,10 @@ def unique_stack(env, stack):
     data = sorted(set(data))
     stack.push(*data)
 
+def wait(env, stack):
+    val = stack.pop()
+    time.sleep(val)
+
 """ Assign tokens to the commands. """
 
 COMMANDS = {
@@ -353,12 +369,9 @@ COMMANDS = {
     'w': (mirror, 1),
     '.': (pop_last, 1),
     ',': (pop_first, 1),
-
     'u': (unique_stack, 1),
     'g': (sort_asc, 1),
-    'G': (sort_asc, 1),
-    'Y': (stack_ispalindrome, 0),
-
+    'G': (sort_desc, 1),
     'K': (op_on_all, 0),
     'k': (op_on_last, 0),
 
@@ -375,7 +388,12 @@ COMMANDS = {
     'Z': ConstNilad(0),
     'T': ConstNilad(10),
     'H': ConstNilad(100),
+    'A': (lambda e,s: s.push(*range(65, 91)), 0),
+    'a': (lambda e,s: s.push(*range(97, 123)), 0),
+    'P': (product, 0),
+    'S': (sum_stack, 0),
     'L': (stack_len, 0),
+    'Y': (stack_ispalindrome, 0),
 
     # Unaries
     '|': UnaryFunc(abs),
@@ -392,15 +410,12 @@ COMMANDS = {
 
     # Other
     'U': (get_random, 2),
+    'W': (wait, 1),
     'i': (interrupt, 0),
     's': (split_int, 1),
     'j': (join_ints, 2),
     'R': (push_inc_range, 1),
     'X': (push_range, 1),
-    'P': (product, 0),
-    'S': (sum_stack, 0),
-    'A': (lambda e,s: s.push(*range(65, 91)), 0),
-    'a': (lambda e,s: s.push(*range(97, 123)), 0),
     'z': (ternary, 3),
 
     # Output commands
@@ -408,9 +423,24 @@ COMMANDS = {
     '_': (print_stack, 0),
     "'": (print_char, 1),
     '"': (print_charcodes, 0),
-    #TODO: output via alphabet.
+    'Q': (out_uppercase, 0),
+    'q': (out_lowercase, 0),
+    'D': (set_delim, 1),
+    'N': (no_delim, 0),
 
 }
+
+# (Testing/Dev function)
+def remaining_chars():
+    all_chars = map(chr, range(32, 127))
+    left = ''
+    for c in all_chars:
+        if c.isdigit():
+            continue
+        if c in COMMANDS.keys():
+            continue
+        left += c
+    return left
 
 #==== this comment is a marker (delete later pls) ====#
 
