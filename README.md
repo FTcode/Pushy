@@ -4,7 +4,7 @@ A stack-based, esoteric programming language.
 
 You can try Pushy via the [online interpreter](https://tio.run/nexus/pushy), provided by @DennisMitchell.
 
-If you want to run a script locally, download the two scripts in this git (Python 3). You can then use the following syntax on the command line:
+If you want to run a script locally, download `pushy.py` and `pushy_interpreter.py`. You can then use the following syntax on the command line:
 
  - `$ pushy f <script-file> [input]`: Open the given file and run as a Pushy script. Input is an (optional) Python 3 literal.
  - `$ pushy t <script-text> [input]`: Directly run the second argument as a Pushy script.
