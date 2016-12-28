@@ -1,5 +1,6 @@
 # Pushy
-Pushy is an esoteric programming language. The name comes from its data structure, two [LIFO stacks](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)), on which one "pushes" operands for different operations. Although it was not designed for [code golf](https://en.wikipedia.org/wiki/Code_golf), its tokenized syntax and range of builtins often result in rather concise code.
+
+A stack-based, esoteric programming language.
 
 You can try Pushy via the [online interpreter](https://tio.run/nexus/pushy), provided by @DennisMitchell.
 
@@ -35,3 +36,6 @@ _(a quine is a program which outputs its own source code)_
     
 [**Try it online!**](https://tio.run/nexus/pushy#@29pqmBswhWvxPX/PwA)
 
+## Docs
+
+Coming soon, one day...
