@@ -71,6 +71,6 @@ if __name__ == '__main__':
     try:
         pushy_interpreter.Script(args[0]).run(args[1])
     except KeyboardInterrupt:
-        error("Program terminated (keyboard interruption).")
+        error("\nProgram terminated (keyboard interruption).")
     except Exception as e:
-        error("Python error: " + repr(e))
+        error("\nPython error: " + repr(e))
