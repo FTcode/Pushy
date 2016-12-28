@@ -1,41 +1,76 @@
-import sys, ast
-from pushy_interpreter import Script
+"""
+Command line interface for Pushy.
+Requires pushy_interpreter.py to be available.
+"""
 
-def cmdError(msg):
-    raise SystemExit(msg)
+import ast
+import sys
 
-# Check whether filename has been provided
-if len(sys.argv) < 2:
-    cmdError('Usage: pushy <file> [input]')
+USAGE = """Usage:
+  $ pushy t <script-text> [input]
+  $ pushy f <script-file> [input]"""
 
-# Check whether specified file exists
-try: file = open(sys.argv[1], encoding = 'ASCII')
-except FileNotFoundError: cmdError('File error: File not found.')
+def error(text):
+    raise SystemExit(text)
 
-# Make sure script is in ASCII
-try: code = file.read()
-except UnicodeDecodeError: cmdError('File error: Pushy files must be ASCII-only.')
+try:
+    import pushy_interpreter
+except:
+    error("Error: Could not import 'pushy_interpreter'.")
 
-# Parse any command-line input
-ins = []
-if len(sys.argv[2:]) > 0:
-    try: ins = ast.literal_eval(' '.join(sys.argv[2:]))
-    except: cmdError('Command line error: unable to parse input (should be a valid python literal)')
+def parse_args():
+    args = sys.argv[1:]
 
-# Convert input to list type
-valid_ins = [list, int, str, tuple]
-t = type(ins)
+    if len(args) < 2:
+        error(USAGE)
 
-if t not in valid_ins:
-    cmdError("Command line error: not an accepted input type.")
-elif t == str: ins = [ord(x) for x in ins]
-elif t in (list, tuple):
-    for x in ins:
-        if type(x) != int: cmdError('Command line error: List inputs can only contain integers.')
-elif t == int:
-    ins = [ins,]
+    scripttype = args[0].lower()
+    if scripttype not in ('t', 'f'):
+        error(USAGE)
 
-ins = list(ins)
+    if scripttype == 't':
+        script = args[1]
+    elif scripttype == 'f':
+        try:
+            script = open(args[1]).read()
+        except:
+            error("Could not find file '{0}'.".format(args[1]))
 
-#Run script
-Script(code).run(*ins)
+    if len(args) == 2:
+        return (script, [])
+
+    return (script, safe_eval(args[2]))
+
+def safe_eval(text):
+    try:
+        literal = ast.literal_eval(text)
+    except:
+        error("Could not parse input. Please provide a valid Python literal.")
+
+    allowed_types = [int, list, tuple, str]
+
+    if type(literal) in (tuple, list):
+        for item in literal:
+            if type(item) != int:
+                error("Inputs lists must only contain integers. ")
+        return literal
+
+    elif type(literal) == int:
+        return [literal]
+
+    elif type(literal) == str:
+        return [ord(char) for char in literal]
+
+    else:
+        error("Not a valid input type.")
+
+
+if __name__ == '__main__':
+
+    args = parse_args()
+    try:
+        pushy_interpreter.Script(args[0]).run(args[1])
+    except KeyboardInterrupt:
+        error("Program terminated (keyboard interruption).")
+    except Exception as e:
+        error("Python error: " + repr(e))
