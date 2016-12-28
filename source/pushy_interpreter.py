@@ -579,7 +579,11 @@ class Env:
         return repr(self.IN) + ', ' + repr(self.OUT)
 
 class Script:
-    def __init__(self, script_text):
+    def __init__(self, script_text, io = None):
+        if io == None:
+            io = IO_Util()
+        self.io = io
+        
         self.tokens = self.to_tokens(script_text)
 
     @staticmethod
@@ -591,7 +595,7 @@ class Script:
 
     def run(self, inputs):
 
-        env = Env(inputs)
+        env = Env(inputs, self.io)
 
         i = -1
         skip = 0
