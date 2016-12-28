@@ -1,4 +1,4 @@
-# Pushy
+# Pushy  [![Build Status](https://travis-ci.org/FTcode/Pushy.svg?branch=master)](https://travis-ci.org/FTcode/Pushy)
 
 A stack-based, esoteric programming language.
 
@@ -6,8 +6,8 @@ You can try Pushy via the [online interpreter](https://tio.run/nexus/pushy), pro
 
 If you want to run a script locally, download `pushy.py` and `pushy_interpreter.py` from the 'source' folder. You can then use Pushy from the command line like so:
 
- - `$ pushy f <script-file> [input]`: Open the given file and run as a Pushy script. Input is an (optional) Python 3 literal.
- - `$ pushy t <script-text> [input]`: Directly run the second argument as a Pushy script.
+ - `$ pushy f <script-file> [input]`: Open the given file and run as a Pushy script. Input is a Python 3 literal (optional).
+ - `$ pushy t <script-text> [input]`: Directly run the second argument as a Pushy script, with given input.
 
 ## Example Programs
 
@@ -23,7 +23,7 @@ This is rather straightforward. Any text wrapped in backticks is interpreted as 
 
 This program takes input from the command line, and prints that many numbers of the fibonacci sequence.
 
-    Z1@2-:2d+;_
+    1Z@2-:2d+;_
 
 [**Try it online!**](https://tio.run/nexus/pushy#LY8xT8QwDIX3/Io3guihtmNZWBhYDsQIh1AuzbURqV0lzqH79SVp68WW/ez3eTnhPcXxhjnwEPQEYQyWbNBiIaPFxYUoOOZ8ZtLGOFCazjbER6Wwxgmv0@ydcdLB0ZwELoIJUbT5Vc3npikuaKCpR62e98UPe82X7CatcHPW944GfNUVmgr0rdpDtyqPhxbiJhvRc4c7GbOHYYqptOheoe0fig6bUSHPM/BlLb3OP7S4ap9sVE@7@0tm8cyz@tkbb0kK/t/IfmdSWJalqf8B) (commented)
 
