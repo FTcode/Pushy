@@ -187,7 +187,13 @@ def head(x):
     return x + 1
 
 def interrupt(env, stack):
-    quit()
+    # Exit with exit code of last stack item.
+    
+    val = stack.pop(peek = True)
+    if val == None:
+        val = 0
+    
+    quit(val)
 
 # Integer root of N: the largest whole number, x, where x^2 <= N
 def intsqrt(n):
@@ -239,7 +245,7 @@ def MathFunc(operation, fail = 0):
     return (stack_func, 1)
 
 def mirror(env, stack):
-    data = stack.copy()[1:]
+    data = stack.copy()[:-1]
     stack.push(*data[::-1])
 
 def multiple_copies(env, stack):
@@ -591,20 +597,59 @@ class Script:
         skip = 0
         loops = []
         
+        stringmode, currstring = False, ''
+        commentmode = False
+        
         while True:
             i += 1
 
             if i >= len(self.tokens):
-                break
-                #TODO: do not break
+                if len(loops) < 1:
+                    break
+
+                if stringmode:
+                    break
+
+                if commentmode:
+                    commentmode = False
+
+                l = loops[-1]
+                
+                if l[0].verify(env):
+                    i = l[1]
+                else:
+                    loops.pop()
+                    
+                continue
 
             char = self.tokens[i]
 
+            if char == COMMENT:
+                commentmode = True
+                continue
+
+            if commentmode:
+                commentmode = (char != COMMENT_ESC)
+                continue
+
+            if char == STRING_MODE:
+                stringmode = not stringmode
+
+                if stringmode == False:
+                    env.curr_stack().push(*[ord(ch) for ch in currstring])
+                    currstring = ''
+                continue
+
+            if stringmode:
+                currstring += char
+                continue
+
             if skip:
-                if char in LOOP_TOKENS:
-                    skip += 1
-                elif char == BACK:
-                    skip -= 1
+                if not (stringmode or commentmode):
+                    if char in LOOP_TOKENS:
+                        skip += 1
+                    elif char == BACK:
+                        skip -= 1
                 continue
 
             if char in LOOP_TOKENS:
@@ -612,10 +657,8 @@ class Script:
                 
                 if newloop[0].verify(env):
                     loops.append(newloop)
-
                 else:
                     skip += 1
-
                 continue
 
             if char == BACK:
@@ -626,13 +669,9 @@ class Script:
 
                 if l[0].verify(env):
                     i = l[1]
-
                 else:
-                    loops.pop()
-
+                    loops.pop()   
                 continue
-
-            
 
             if char.isdigit():
                 env.curr_stack().push(int(char))
@@ -647,5 +686,6 @@ class Script:
                 continue
 
         return env
-                
-        
+
+# All the necessary classes, dicts, etc, are now set up.
+# Programs are run using Script(<text>).run(*<inputs>).
