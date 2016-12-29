@@ -124,7 +124,7 @@ Mapping operations, as the name suggests, map integer values to new values. If t
 
 ### Miscellaneous Commands
 
- - `W` - Pop an integer, wait the many seconds.
+ - `W` - Pop an integer, wait that many seconds.
  - `U` - Pop two integers, and get a random integer between them.
  - `i` - Terminate the program.
  - `s` - Spilt an integer into its base 10 digits. For example, pop `123`, and push `1, 2, 3`.
