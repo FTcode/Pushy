@@ -18,7 +18,7 @@
  - `&` - Push a copy of the last item.
  - `c` - Clear the stack.
  - `w` - Mirror the stack (reflect it around the central item).
- - `d` - Pop an integer, `n`, then make copies of the last `n` items on stack. For example, `[3, 4, 5, 2]` becomes `[3, 4, 5, 4, 5]`
+ - `d` - Pop an integer, `n`, then make copies of the last `n` items on stack.
  - `C` - Pop an item, and copy the item before that many times. 
  - `u` - Make the stack an set of itself - removing all duplicate items. Then sort it ascendingly.
  - `g` - Sort the stack in ascending order.
