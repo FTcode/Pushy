@@ -9,7 +9,11 @@ If you want to run a script locally, download `pushy.py` and `pushy_interpreter.
  - `$ pushy f <script-file> [input]`: Open the given file and run as a Pushy script. Input is a Python 3 literal (optional).
  - `$ pushy t <script-text> [input]`: Directly run the second argument as a Pushy script, with given input.
 
-## Example Programs
+## Docs:
+
+A basic list of pushy syntax and commands can be found [in the docs folder](https://github.com/FTcode/Pushy/blob/master/docs/commands.md) of this repository.
+
+## Example Programs:
 
 ### Hello World:
 
