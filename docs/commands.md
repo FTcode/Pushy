@@ -49,7 +49,7 @@ Firstly, the K flag is very important. It can be toggled like so:
 
 The state of the K-flag affects the behaviour of commands in the list below. If false, these operations simply pop 2 items off the stack, perform the operation*, and push the result. However, if the K-flag is True, the top item is popped and then used to perform the operation on _all stack items_. 
 
-<sub>* In operations where order matters, the operands are used in the order they were placed on the stack, so `10 5 /` performs `5 / 10`.</sub>
+<sub>* In operations where order matters, the operands are used in the order they were placed on the stack, so `10 5 /` performs `10 / 5`.</sub>
 
 - `+` - Addition
 - `-` - Subtraction
