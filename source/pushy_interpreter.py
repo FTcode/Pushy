@@ -540,6 +540,7 @@ class IO_Util:
 
     def out(self, *values):
         print(*values, end = self.delim)
+        sys.stdout.flush()
         self.last_sep = self.delim
 
     def err(self, text):
