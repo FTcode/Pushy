@@ -39,7 +39,3 @@ _(a quine is a program which outputs its own source code)_
     _"
     
 [**Try it online!**](https://tio.run/nexus/pushy#@29pqmBswhWvxPX/PwA)
-
-## Docs
-
-Coming soon, one day...
