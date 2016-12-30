@@ -622,6 +622,7 @@ class Script:
             i += 1
 
             if i >= len(self.tokens):
+
                 if len(loops) < 1:
                     break
 
@@ -631,6 +632,7 @@ class Script:
                 if commentmode:
                     commentmode = False
 
+                skip = 0
                 l = loops[0]
 
                 if l[0].verify(env):
@@ -675,21 +677,21 @@ class Script:
                 newloop = (LOOP_TOKENS[char](env), i)
 
                 if newloop[0].verify(env):
-                    loops.append(newloop)
+                    loops.insert(0, newloop)
                 else:
                     skip += 1
                 continue
 
             if char == BACK:
-                if len(loops) == 0:
+                if len(loops) < 1:
                     continue
 
-                l = loops[-1]
+                l = loops[0]
 
                 if l[0].verify(env):
                     i = l[1]
                 else:
-                    loops.pop()
+                    loops.pop(0)
                 continue
 
             if char.isdigit():
