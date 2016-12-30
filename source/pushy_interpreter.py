@@ -20,7 +20,7 @@ class Stack(list):
     def push(self, *values):
         """ Push a list of integer values to the stack (in the given order). """
         for v in values:
-            if type(v) in (int, float):
+            if type(v) in (int, float, bool):
                 super().append(int(v))
 
     # Alias "append" with "push", like regular Python lists.
@@ -280,20 +280,31 @@ def pop_first(env, stack):
 def pop_last(env, stack):
     stack.pop()
 
-def primality(num):
-    #TODO: Optimize prime function!
-
-    if num < 2:
+def primality(n):
+    if n < 2:
         return False
-    if num == 2:
-        return True
-    if num == 3:
-        return True
 
-    for i in range(2, int(math.sqrt(num)) + 1):
-        if num % i == 0: return False
+    if n < 4:
+        return True
+    
+    if n % 2 == 0:
+        return False
+    
+    if n % 3 == 0:
+        return False
+
+    root = math.sqrt(n)
+
+    f = 5
+    while f <= root:
+        if n%f == 0:
+            return False
+        if n%(f+2) == 0:
+            return False
+        f += 6
 
     return True
+
 
 def print_char(env, stack):
     val = stack.pop(peek = True)
@@ -594,7 +605,9 @@ class Script:
 
         return re.findall(r'0|[1-9]+\d*|[^\d]', text)
 
-    def run(self, inputs):
+    def run(self, inputs = None):
+        if inputs == None:
+            inputs = []
 
         env = Env(inputs, self.io)
 
@@ -618,12 +631,12 @@ class Script:
                 if commentmode:
                     commentmode = False
 
-                l = loops[-1]
+                l = loops[0]
 
                 if l[0].verify(env):
                     i = l[1]
                 else:
-                    loops.pop()
+                    loops.pop(0)
 
                 continue
 
