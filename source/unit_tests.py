@@ -1,7 +1,7 @@
 """
 Unit tests for the Pushy Interpreter.
 Requires 'pushy_interpreter.py' to be available.
-An exit code of 0 means the build is passing - otherwise, it fails.
+An exit code of 0 means the build is passing - otherwise, it's failing.
 """
 
 from pushy_interpreter import Script, IO_Util
@@ -37,6 +37,8 @@ def token_test():
     for test in test_cases:
         assert Script.to_tokens(test[0]) == test[1]
 
+    print("Passed tokenizer test.")
+
 def script_test():
     test_cases = [
         #== Format: [script, [<inputs>], expected output]
@@ -52,12 +54,17 @@ def script_test():
 
         # Sum of factorial's digits
         ['fsS#', [10], '27\n'],
+
+        # Check nested loops
+        ['03:3:#', [0], '0\n'*9],
     ]
 
     for test in test_cases:
         D = DummyIO()
         Script(test[0], D).run(test[1])
         assert D.output == test[2]
+
+    print("Passed basic script test. ")
     
 if __name__ == '__main__':
     token_test()
