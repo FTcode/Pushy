@@ -5,6 +5,7 @@
  - Pushy has 2 stacks, but at any given time, there is one stack in focus. This is called the "current stack". All operations, unless otherwise specified, act on the current stack.
  - Commands have a _minimum arity_ - how many items they require on the stack to act. If there are not enough items, the command will be ignored.
  - Pushy uses integers only, but booleans are represented as 0 (false) and 1 (true).
+
 ---
 
 ### Stack Transformation:
