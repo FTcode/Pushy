@@ -267,12 +267,10 @@ def op_on_last(env, stack):
     env.on_all = False
 
 def out_lowercase(env, stack):
-    s = [ord('a') + i % 26 for i in stack]
-    env.io.out(s)
+    env.io.out(''.join(chr(97 + i%26) for i in stack))
 
 def out_uppercase(env, stack):
-    s = [ord('A') + i % 26 for i in stack]
-    env.io.out(s)
+    env.io.out(''.join(chr(65 + i%26) for i in stack))
 
 def pop_first(env, stack):
     stack.pop(index = 0)
