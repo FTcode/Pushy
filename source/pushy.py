@@ -66,11 +66,11 @@ def safe_eval(text):
 
 
 if __name__ == '__main__':
-
     args = parse_args()
+    
     try:
         pushy_interpreter.Script(args[0]).run(args[1])
     except KeyboardInterrupt:
         error("\nProgram terminated (keyboard interruption).")
     except Exception as e:
-        error("\nPython error: " + repr(e))
+        error("\nPython error: " + str(e))

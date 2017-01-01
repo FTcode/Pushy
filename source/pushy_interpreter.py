@@ -333,11 +333,26 @@ def product(env, stack):
 
 def push_inc_range(env, stack):
     val = stack.pop()
-    stack.push(*range(1, val+1))
+    if val == 0:
+        return
+
+    elif val < 0:
+        stack.push(*range(val, 0))
+
+    else:
+        stack.push(*range(1, val+1))
 
 def push_range(env, stack):
     val = stack.pop()
-    stack.push(*range(val))
+    if val == 0:
+        return
+
+    elif val < 0:
+        stack.push(*range(val+1, 1))
+
+    else:
+        stack.push(*range(val))
+    
 
 def rightshift(env, stack):
     stack.insert(0, stack.pop())
