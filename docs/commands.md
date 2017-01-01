@@ -129,6 +129,6 @@ Mapping operations, as the name suggests, map integer values to new values. If t
  - `i` - Terminate the program.
  - `s` - Spilt an integer into its base 10 digits. For example, pop `123`, and push `1, 2, 3`.
  - `j` - Concatenation. If the K-flag is True, this pops all stack items, joins them into one large integer, and pushes the result. Otherwise, this pops the last 2 items and pushes their concatenation. Only the first integer in a concatenation sequence keeps its sign.
- - `R` - Pop an integer and push all numbers between itself and 1. This includes the integer itself. Does nothing for values less than 1.
- - `X` - Pop an integer and push all numbers between itself and 0. This includes 0, but not the integer. Does nothing for values less than 1.
+ - `R` - Pop an integer and push range(0, n) - not including 0, but including `n`. 
+ - `X` - Pop an integer and push range(0, n) - including 0, but not including `n`. 
  - `z` - The ternary operator. Pop A, then B, then C. If A is non-zero, push B. Otherwise, push C.
