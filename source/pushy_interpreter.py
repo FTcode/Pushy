@@ -225,6 +225,9 @@ def join_ints(env, stack):
 
     stack.push(int(s))
 
+def lcm(a, b):
+    return (a * b) // math.gcd(a, b)
+
 def leftshift(env, stack):
     stack.push(stack.pop(index = 0))
 
@@ -284,10 +287,10 @@ def primality(n):
 
     if n < 4:
         return True
-    
+
     if n % 2 == 0:
         return False
-    
+
     if n % 3 == 0:
         return False
 
@@ -350,7 +353,7 @@ def push_range(env, stack):
 
     else:
         stack.push(*range(val))
-    
+
 
 def rightshift(env, stack):
     stack.insert(0, stack.pop())
@@ -372,6 +375,11 @@ def send_to_out(env, stack):
 def set_delim(env, stack):
     val = abs(stack.pop())
     env.io.set_delim(chr(val))
+
+def shuffle_stack(env, stack):
+    data = stack.clear()
+    random.shuffle(data)
+    stack.push(*data)
 
 def sort_asc(env, stack):
     data = stack.clear()
@@ -423,6 +431,10 @@ def unique_stack(env, stack):
 def wait(env, stack):
     val = stack.pop()
     time.sleep(val)
+
+def wait_millis(env, stack):
+    val = stack.pop()
+    time.sleep(val / 1000)
 
 """ Assign tokens to the commands. """
 
@@ -523,6 +535,26 @@ COMMANDS = {
 
 }
 
+EXTRA_COMMANDS = {
+    # These commands are called by prefixing the char with the
+    # "special command" character.
+
+    # Bitwise Functions
+    '>' : MathFunc(operator.rshift),
+    '<' : MathFunc(operator.lshift),
+    '&' : MathFunc(operator.and_),
+    '|' : MathFunc(operator.or_),
+    '^' : MathFunc(operator.xor),
+    '~' : UnaryFunc(operator.invert),
+
+    '/' : MathFunc(math.gcd),
+    '*' : MathFunc(lcm),
+
+    'S' : (shuffle_stack, 1),
+    'W' : (wait_millis, 1),
+
+}
+
 LOOP_TOKENS = {
 
     '?': IfStatement,
@@ -535,25 +567,11 @@ LOOP_TOKENS = {
 BACK = ';'
 BREAK = 'B'
 
+SPECIAL_COMMAND = 'o'
+
 STRING_MODE = '`'
 COMMENT = '\\'
 COMMENT_ESC = '\n'
-
-# (Testing/Dev function)
-def remaining_chars():
-    all_chars = map(chr, range(32, 127))
-    left = ''
-    for c in all_chars:
-        if c.isdigit():
-            continue
-        if c in COMMANDS.keys() or c in LOOP_TOKENS.keys():
-            continue
-        if c in (BACK, BREAK, STRING_MODE, COMMENT, COMMENT_ESC, ' '):
-            continue
-
-        left += c
-    return left
-
 
 class IO_Util:
     def __init__(self, delim = '\n'):
@@ -608,15 +626,16 @@ class Script:
         if io == None:
             io = IO_Util()
         self.io = io
-        
+
         self.tokens = self.to_tokens(script_text)
 
     @staticmethod
     def to_tokens(text):
         """ Tokenizer function. Takes a Pushy script and tokenizes it.
-        Adjacent integers are grouped together, but leading zeroes are parsed seperately. """
+        Adjacent integers are grouped together, but leading zeroes are parsed seperately.
+        Anything after a 'o' is grouped with it, parsed as a special command - except for string/comment mode chars. """
 
-        return re.findall(r'0|[1-9]+\d*|[^\d]', text)
+        return re.findall(r'o[^`]|0|[1-9]+\d*|[^\d]', text)
 
     def run(self, inputs = None):
         if inputs == None:
@@ -713,6 +732,17 @@ class Script:
 
             if char in COMMANDS:
                 cmd = COMMANDS[char]
+
+                if cmd[1] <= len(env.curr_stack()):
+                    cmd[0](env, env.curr_stack())
+
+                continue
+
+            if len(char) == 2 and char.startswith(SPECIAL_COMMAND):
+                if not char[1] in EXTRA_COMMANDS:
+                    continue
+
+                cmd = EXTRA_COMMANDS[char[1]]
 
                 if cmd[1] <= len(env.curr_stack()):
                     cmd[0](env, env.curr_stack())
