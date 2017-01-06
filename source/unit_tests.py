@@ -32,12 +32,6 @@ def token_test():
         # Ensure leading zeroes are parsed seperately:
         ['015err', ['0', '15', 'e', 'r', 'r']],
 
-        # Make sure special commands 'o?' are parsed:
-        ['56 5o/', ['56', ' ', '5', 'o/']],
-
-        # ...but do not interfere with strings:
-        ['`Yo`"', ['`', 'Y', 'o', '`', '"']],
-
     ]
 
     for test in test_cases:
