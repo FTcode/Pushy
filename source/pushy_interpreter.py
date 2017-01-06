@@ -279,6 +279,8 @@ def pop_last(env, stack):
     stack.pop()
 
 def primality(n):
+    """ Check the primality of an integer. Returns True or False. """
+    
     if n < 2:
         return False
 

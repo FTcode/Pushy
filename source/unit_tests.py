@@ -1,7 +1,7 @@
 """
 Unit tests for the Pushy Interpreter.
 Requires 'pushy_interpreter.py' to be available.
-An exit code of 0 means the build is passing - otherwise, it's failing.
+An exit code of 0 means the build is passing. Otherwise, it's failing.
 """
 
 from pushy_interpreter import Script, IO_Util
