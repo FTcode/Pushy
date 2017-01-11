@@ -89,7 +89,7 @@ All input is automatically copied onto stack 1, and so it is usually referred to
 Loops are an important part of the Pushy syntax. All loops are opened with a certain character, and closed with `;`. Missing semi-colons at the end of a program are automatically inserted by the interpreter.
 
  - `:` - For loop: pop a value, and iterate the loop that many times. If the stack is empty, this performs 0 iterations.
- - `$` - While loop: while the last item on stack is positive, keep iterating. If the stack is empty, the loop is broken out of.
+ - `$` - While loop: while the last item on stack is truthy (non-zero), keep iterating. If the stack is empty, the loop is broken out of.
  - `?` - If statement (this is not technically a loop, but has the same syntax): pop a value, and run the code if it is non-zero. Otherwise, skip the code block.
  - `[` - Infinite loop: keep looping until the program finishes, or the loop is broken out of.
  - `;` - End loop: this character signifies the end of a code block.
