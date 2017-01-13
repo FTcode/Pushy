@@ -145,6 +145,24 @@ class InfLoop(Loop):
 
 """ Define all commands to be used in the interpreter. """
 
+def all_equal(env, stack):
+    val = stack.pop(peek = True)
+    for x in stack:
+        if x != val:
+            stack.push(0)
+            return
+    stack.push(1)
+
+def binary_digits(x):
+    x = abs(x)
+
+    result = []
+    while x > 0:
+        result.append(x%2)
+        x >>= 1
+
+    return result[::-1]
+
 def clear_stack(env, stack):
     stack.clear()
 
@@ -152,6 +170,9 @@ def ConstNilad(*value):
     def stack_func(env, stack):
         stack.push(*value)
     return (stack_func, 0)
+
+def copy_input(env, stack):
+    stack.push(*env.inputs)
 
 def copy_region(env, stack):
     val = stack.pop()
@@ -207,6 +228,9 @@ def intsqrt(n):
 def ispalindrome(x):
     s = str(x)
     return s == s[::-1]
+
+def is_set(env, stack):
+    stack.push(len(set(stack)) == len(stack))
 
 def join_ints(env, stack):
     if len(stack) < 2:
@@ -420,6 +444,10 @@ def ternary(env, stack):
     fVal = stack.pop()
     stack.push(tVal if a else fVal)
 
+def tobinary(env, stack):
+    val = stack.pop()
+    stack.push(*binary_digits(val))
+
 def UnaryFunc(func):
     def stack_func(env, stack):
         stack.run_unary(func, on_all = env.on_all)
@@ -535,25 +563,30 @@ COMMANDS = {
     'D': (set_delim, 1),
     'N': (no_delim, 0),
 
-}
 
-EXTRA_COMMANDS = {
-    # These commands are called by prefixing the char with the
-    # "special command" character.
+    # EXTRA COMMANDS
+    # These commands are accessed by being prefixed with an 'o'.
 
-    # Bitwise Functions
-    '>' : MathFunc(operator.rshift),
-    '<' : MathFunc(operator.lshift),
-    '&' : MathFunc(operator.and_),
-    '|' : MathFunc(operator.or_),
-    '^' : MathFunc(operator.xor),
-    '~' : UnaryFunc(operator.invert),
+    # Bitwise/Binary Functions
+    'o>' : MathFunc(operator.rshift),
+    'o<' : MathFunc(operator.lshift),
+    'o&' : MathFunc(operator.and_),
+    'o|' : MathFunc(operator.or_),
+    'o^' : MathFunc(operator.xor),
+    'o~' : UnaryFunc(operator.invert),
+    'oB' : (tobinary, 1),
 
-    '/' : MathFunc(math.gcd),
-    '*' : MathFunc(lcm),
-
-    'S' : (shuffle_stack, 1),
-    'W' : (wait_millis, 1),
+    # Misc Functions
+    'o/' : MathFunc(math.gcd),
+    'o*' : MathFunc(lcm),
+    
+    'o=' : (all_equal, 0),
+    'ou' : (is_set, 0),
+    
+    'oI' : (copy_input, 0),
+    
+    'oS' : (shuffle_stack, 1),
+    'oW' : (wait_millis, 1),
 
 }
 
@@ -568,8 +601,6 @@ LOOP_TOKENS = {
 
 BACK = ';'
 BREAK = 'B'
-
-SPECIAL_COMMAND = 'o'
 
 STRING_MODE = '`'
 COMMENT = '\\'
@@ -734,17 +765,6 @@ class Script:
 
             if char in COMMANDS:
                 cmd = COMMANDS[char]
-
-                if cmd[1] <= len(env.curr_stack()):
-                    cmd[0](env, env.curr_stack())
-
-                continue
-
-            if len(char) == 2 and char.startswith(SPECIAL_COMMAND):
-                if not char[1] in EXTRA_COMMANDS:
-                    continue
-
-                cmd = EXTRA_COMMANDS[char[1]]
 
                 if cmd[1] <= len(env.curr_stack()):
                     cmd[0](env, env.curr_stack())
