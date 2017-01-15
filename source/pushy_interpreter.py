@@ -232,6 +232,14 @@ def ispalindrome(x):
 def is_set(env, stack):
     stack.push(len(set(stack)) == len(stack))
 
+def is_sorted_asc(env, stack):
+    b = all(stack[i] <= stack[i+1] for i in range(len(stack)-1))
+    stack.push(b)
+
+def is_sorted_desc(env, stack):
+    b = all(stack[i] >= stack[i+1] for i in range(len(stack)-1))
+    stack.push(b)
+
 def join_ints(env, stack):
     if len(stack) < 2:
         return
@@ -280,6 +288,12 @@ def multiple_copies(env, stack):
     value = stack.pop(peek = True)
     for i in range(copies):
         stack.push(value)
+
+def multiply_stack(env, stack):
+    val = stack.pop()
+    data = stack.clear()
+    data *= val
+    stack.push(*data)
 
 def no_delim(env, stack):
     env.io.set_delim('')
@@ -332,6 +346,10 @@ def primality(n):
 
     return True
 
+def prime_filter(env, stack):
+    data = stack.clear()
+    data = filter(primality, data)
+    stack.push(*data)
 
 def print_char(env, stack):
     val = stack.pop(peek = True)
@@ -573,18 +591,20 @@ COMMANDS = {
     'o&' : MathFunc(operator.and_),
     'o|' : MathFunc(operator.or_),
     'o^' : MathFunc(operator.xor),
+    'ol' : UnaryFunc(int.bit_length),
     'o~' : UnaryFunc(operator.invert),
     'oB' : (tobinary, 1),
 
     # Misc Functions
-    'o/' : MathFunc(math.gcd),
-    'o*' : MathFunc(lcm),
-    
+    'op' : (prime_filter, 0),
+    'og' : (is_sorted_asc, 0),
+    'oG' : (is_sorted_desc, 0),
     'o=' : (all_equal, 0),
     'ou' : (is_set, 0),
-    
+    'o/' : MathFunc(math.gcd),
+    'o*' : MathFunc(lcm),
     'oI' : (copy_input, 0),
-    
+    'od' : (multiply_stack, 1),
     'oS' : (shuffle_stack, 1),
     'oW' : (wait_millis, 1),
 
