@@ -742,7 +742,8 @@ class Script:
                 stringmode = not stringmode
 
                 if stringmode == False:
-                    env.curr_stack().push(*[ord(ch) for ch in currstring])
+                    if not skip:
+                        env.curr_stack().push(*[ord(ch) for ch in currstring])
                     currstring = ''
                 continue
 
